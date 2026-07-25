@@ -1,7 +1,6 @@
 # Insta360 达人营销数据洞察平台 — Demo 原型
 
-> 基于架构方案《影石技术栈.md》搭建的最小可运行 Demo。前端按 UI 效果图 v1
-> 复刻"数据洞察"主页面,后端 / AI 引擎均为可独立运行的最小骨架,真实 OLAP / 大模型可平滑替换。
+> 最小可运行 Demo。前端按 UI 效果图 v1 复刻"数据洞察"主页面,后端 / AI 引擎均为可独立运行的最小骨架,真实 OLAP / 大模型可平滑替换。
 
 ## 目录结构
 
@@ -132,7 +131,7 @@ npm run dev
 | OLAP 数仓 (ClickHouse / Doris) | `backend/internal/mock` 内存数据 | 物化视图 + 异步预聚合 |
 | 聚合 API | `backend/internal/service` | 不变,只把 mock 换成 ch 查询 |
 | AI 引擎 | `backend/internal/service/ai_service` 走规则 | 调 `ai/` Python FastAPI `/v1/insights` |
-| 鉴权 | 无 (Demo 阶段) | JWT 中间件 + Row-Level Security |
+| 鉴权 | JWT + SQLite（已落地，dev 可免登录） | Row-Level Security + 多角色 |
 | 缓存 | 无 | Redis(核心 KPI 1-3 min) |
 | 消息队列 | 无 | Kafka(原始事件) + Flink(实时) |
 | 容器化 | 无 | Docker + K8s |
@@ -141,4 +140,9 @@ npm run dev
 
 - ✅ 前端 `vite build` 成功 (2237 modules, 6.2s)
 - ✅ AI 引擎 Python import 全部通过,规则兜底输出 3 条洞察
-- ✅ 后端代码按 Go 标准布局,服务装配完整(待本地装 Go 后跑 `go run`)
+- ✅ 后端 `go build ./...` + `go test ./...` 全绿（本机 `GOPROXY=goproxy.cn` 已可编译测试，无需放行网络）
+
+## AI 代理交接
+
+本项目已为 AI 编码工具（OpenAI Codex / Claude Code / Cursor / GitHub Copilot）准备交接手册：**`CODEX.md`**（与 `AGENTS.md` 内容一致）。
+任何 AI 代理接手前请先阅读该文件，严格遵守其中的「铁律」与「已知 bug 修复」，避免重复踩坑。

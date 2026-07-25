@@ -4,9 +4,12 @@ node_modules/
 # ========== 前端构建产物 ==========
 frontend/dist/
 frontend/build/
-frontend/.build-fresh/        # Vite 打包产物（哈希文件名，可重新生成）
-frontend/vite.config.js.timestamp-*.mjs  # Vite 临时配置缓存
-frontend/live_preview.png     # 预览截图，非源码
+# Vite 打包产物（哈希文件名，可重新生成）
+frontend/.build-fresh/
+# Vite 临时配置缓存
+frontend/vite.config.js.timestamp-*.mjs
+# 预览截图，非源码
+frontend/live_preview.png
 dist/
 build/
 .build-tmp/
