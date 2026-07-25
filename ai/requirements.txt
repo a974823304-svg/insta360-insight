@@ -1,0 +1,19 @@
+# Insta360 达人营销数据洞察平台 — AI 智能洞察引擎 (Python)
+# 对应架构方案文档「六、AI 智能洞察引擎」
+
+# --- Web 框架 ---
+fastapi==0.111.0
+uvicorn[standard]==0.30.1
+
+# --- 数据契约 ---
+pydantic==2.7.1
+
+# --- LLM 客户端(按 provider 选择启用) ---
+# 国内: 阿里云百炼 / 通义千问
+dashscope==1.20.0
+# 国外: OpenAI 兼容服务
+openai==1.40.0
+
+# --- 数据分析(后续接入离线 ETL 时使用) ---
+pandas==2.2.2
+numpy==1.26.4

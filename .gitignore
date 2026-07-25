@@ -1,0 +1,39 @@
+# ========== 依赖（最大头，247MB，绝对不能传） ==========
+node_modules/
+
+# ========== 前端构建产物 ==========
+frontend/dist/
+frontend/build/
+frontend/.build-fresh/        # Vite 打包产物（哈希文件名，可重新生成）
+frontend/vite.config.js.timestamp-*.mjs  # Vite 临时配置缓存
+frontend/live_preview.png     # 预览截图，非源码
+dist/
+build/
+.build-tmp/
+*.tsbuildinfo
+
+# ========== Go 编译产物 / 可执行文件 ==========
+*.exe
+backend/bin/
+backend/be*
+
+# ========== 数据库（运行时数据，非源码） ==========
+*.db
+backend/data/
+
+# ========== WorkBuddy 项目内部数据（不要提交） ==========
+.workbuddy/
+
+# ========== AI 助手运行时产物（可选忽略） ==========
+.superpowers/
+
+# ========== 环境变量（含潜在密钥，不要提交） ==========
+.env.local
+.env.*.local
+*.local
+
+# ========== 日志 / 临时 / 系统文件 ==========
+*.log
+*.tmp
+.DS_Store
+Thumbs.db

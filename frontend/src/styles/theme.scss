@@ -1,0 +1,141 @@
+// 暗色主题样式 + 自定义 CSS 变量
+// 颜色取自架构文档"UI 暗色配色",与 UI 效果图保持一致
+
+:root {
+  // 基础色板
+  --bg-base: #0B1020;        // 整体背景
+  --bg-elev: #131A30;        // 卡片 / 浮层
+  --bg-elev-2: #1B2440;      // 二级浮层 / hover
+  --bg-elev-3: #243056;      // 输入框 / 选中
+  --border: rgba(255, 255, 255, 0.06);
+  --border-strong: rgba(255, 255, 255, 0.12);
+
+  // 文字
+  --text-primary: #E6EBF5;
+  --text-secondary: #8A93B2;
+  --text-muted: #5A6182;
+
+  // 品牌色
+  --brand: #3DD9EB;          // Insta360 青
+  --brand-2: #5EA1FF;        // 蓝
+  --brand-3: #A07BFF;        // 紫
+  --success: #7DD96E;
+  --warning: #FFB547;
+  --danger: #FF6B6B;
+
+  // 阴影
+  --shadow-1: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-2: 0 8px 24px rgba(0, 0, 0, 0.35);
+  --shadow-3: 0 24px 48px rgba(0, 0, 0, 0.5);
+
+  // 玻璃拟态
+  --glass: rgba(19, 26, 48, 0.6);
+  --glass-blur: blur(20px) saturate(180%);
+
+  // 圆角
+  --radius-sm: 8px;
+  --radius: 12px;
+  --radius-lg: 16px;
+
+  // 字体
+  --font-num: 'Inter', 'SF Pro Display', system-ui, -apple-system, 'Segoe UI', sans-serif;
+}
+
+// 全局基础样式
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#app {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: var(--bg-base);
+  color: var(--text-primary);
+  font-family: system-ui, -apple-system, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+// 自定义滚动条
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 4px;
+  &:hover {
+    background: rgba(255, 255, 255, 0.16);
+  }
+}
+
+// 工具类
+.text-secondary { color: var(--text-secondary); }
+.text-muted { color: var(--text-muted); }
+.text-brand { color: var(--brand); }
+.text-success { color: var(--success); }
+.text-warning { color: var(--warning); }
+.text-danger { color: var(--danger); }
+
+.num { font-family: var(--font-num); font-feature-settings: 'tnum'; }
+
+// 覆盖 Element Plus 暗色主题的部分细节
+.el-card {
+  background: var(--bg-elev) !important;
+  border: 1px solid var(--border) !important;
+  color: var(--text-primary) !important;
+  border-radius: var(--radius) !important;
+}
+
+.el-card__header {
+  border-bottom: 1px solid var(--border) !important;
+  color: var(--text-primary) !important;
+  font-weight: 600;
+}
+
+.el-button--primary {
+  --el-button-bg-color: var(--brand);
+  --el-button-border-color: var(--brand);
+  --el-button-hover-bg-color: #4FE3F5;
+  --el-button-hover-border-color: #4FE3F5;
+  --el-button-active-bg-color: #2BC3D5;
+  color: #0B1020 !important;
+  font-weight: 600;
+}
+
+.el-input__wrapper,
+.el-select .el-input__wrapper,
+.el-date-editor.el-input__wrapper {
+  background: var(--bg-elev-2) !important;
+  box-shadow: 0 0 0 1px var(--border) inset !important;
+  &:hover { box-shadow: 0 0 0 1px var(--border-strong) inset !important; }
+  &.is-focus { box-shadow: 0 0 0 1px var(--brand) inset !important; }
+}
+
+.el-table {
+  --el-table-bg-color: transparent;
+  --el-table-tr-bg-color: transparent;
+  --el-table-header-bg-color: var(--bg-elev-2);
+  --el-table-border-color: var(--border);
+  --el-table-text-color: var(--text-primary);
+  --el-table-header-text-color: var(--text-secondary);
+  --el-table-row-hover-bg-color: var(--bg-elev-2);
+  background: transparent;
+}
+
+.el-tag {
+  background: rgba(94, 161, 255, 0.12) !important;
+  border-color: rgba(94, 161, 255, 0.24) !important;
+  color: var(--brand-2) !important;
+}
