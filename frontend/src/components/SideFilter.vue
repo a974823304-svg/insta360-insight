@@ -5,7 +5,7 @@
     宽度从 260 → 220, 内边距 18 → 14, 块间距 18 → 12
     标签字号 12 → 11, 控件高度统一减小, 适配一屏装下
   -->
-  <aside class="side">
+  <aside v-if="!filter.collapsed" class="side">
     <div class="head">
       <span class="title">筛选条件</span>
       <el-link type="primary" :underline="false" class="reset" @click="onReset">重置</el-link>
@@ -132,11 +132,22 @@
       <span v-if="filter.isDirty" class="dirty">● 有未应用更改</span>
     </div>
   </aside>
+
+  <!-- 收起态: 36px 薄竖条, 可点击展开 -->
+  <aside v-else class="stub" aria-label="展开筛选条件">
+    <button class="stub-toggle" type="button"
+            @click="filter.toggleCollapsed"
+            :title="filter.collapsed ? '展开筛选' : '收起筛选'"
+            aria-label="展开筛选条件">
+      <el-icon><Expand /></el-icon>
+    </button>
+    <span v-if="filter.isDirty" class="stub-dot" title="有未应用更改"></span>
+  </aside>
 </template>
 
 <script setup>
 import { ref, onMounted, computed } from 'vue'
-import { Calendar } from '@element-plus/icons-vue'
+import { Calendar, Expand } from '@element-plus/icons-vue'
 import { useFilterStore } from '../stores/filter'
 import { useInsightStore } from '../stores/insight'
 
@@ -447,5 +458,41 @@ function platformBg(p) {
     color: var(--brand);
     font-size: 10px;
   }
+}
+
+// === 收起态: 36px 薄竖条 ===
+.stub {
+  width: 36px;
+  flex-shrink: 0;
+  background: var(--bg-elev);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 0;
+  overflow: hidden;
+}
+.stub-toggle {
+  width: 26px;
+  height: 26px;
+  display: grid;
+  place-items: center;
+  background: transparent;
+  border: none;
+  border-radius: 6px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease;
+  &:hover { background: rgba(255, 255, 255, 0.06); color: var(--brand); }
+  &:focus-visible { outline: 2px solid var(--brand); outline-offset: 1px; }
+  .el-icon { font-size: 16px; }
+}
+.stub-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--brand);
+  box-shadow: 0 0 6px rgba(61, 217, 235, 0.6);
 }
 </style>
