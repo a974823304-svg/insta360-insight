@@ -11,20 +11,21 @@ import (
 // ============================================================
 // 达人分析 KPI(5 张卡)
 // ============================================================
-func CreatorKpi() []model.KpiCard {
-	return []model.KpiCard{
+func CreatorKpi(f model.Filter) []model.KpiCard {
+	k := []model.KpiCard{
 		{Key: "creators", Label: "达人总数", Value: "20", Raw: 20, DeltaPct: 8.5, DeltaUp: true, Description: "较上期"},
 		{Key: "new", Label: "本月新增", Value: "3", Raw: 3, DeltaPct: 50, DeltaUp: true, Description: "较上期"},
 		{Key: "followers", Label: "平均粉丝", Value: FormatCount(1_820_000), Raw: 1_820_000, DeltaPct: 4.2, DeltaUp: true, Description: "较上期"},
 		{Key: "engagement", Label: "平均互动率", Value: "6.8%", Raw: 6.8, DeltaPct: 0.6, DeltaUp: true, Description: "较上期"},
 		{Key: "collabs", Label: "合作占比", Value: "45%", Raw: 45, DeltaPct: 12, DeltaUp: true, Description: "较上期"},
 	}
+	return ScaleKpis(k, f)
 }
 
 // ============================================================
 // 粉丝规模趋势(近 30 天累计粉丝, M 量级, 复用 ViewsTrendPoint 形状)
 // ============================================================
-func CreatorTrend() []model.ViewsTrendPoint {
+func CreatorTrend(f model.Filter) []model.ViewsTrendPoint {
 	base := int64(180_000_000)
 	points := make([]model.ViewsTrendPoint, 0, 30)
 	now := time.Now().Truncate(24 * time.Hour)
@@ -38,13 +39,13 @@ func CreatorTrend() []model.ViewsTrendPoint {
 			PrevViews: prev,
 		})
 	}
-	return points
+	return WindowTrend(points, f)
 }
 
 // ============================================================
 // 达人列表(20 个, 覆盖 3 平台 × 5 赛道)
 // ============================================================
-func CreatorList() []model.TopCreator {
+func CreatorList(f model.Filter) []model.TopCreator {
 	seeds := []struct {
 		name, avatar string
 	}{
@@ -76,14 +77,14 @@ func CreatorList() []model.TopCreator {
 			Tags:       []string{"#" + t, "#极限"},
 		})
 	}
-	return out
+	return FilterTopCreators(out, f)
 }
 
 // ============================================================
 // 平台分布(按粉丝量聚合)
 // ============================================================
-func CreatorPlatforms() []model.PlatformShare {
-	list := CreatorList()
+func CreatorPlatforms(f model.Filter) []model.PlatformShare {
+	list := CreatorList(model.Filter{})
 	m := map[string]int64{}
 	for _, c := range list {
 		m[c.Platform] += c.Followers
@@ -102,14 +103,14 @@ func CreatorPlatforms() []model.PlatformShare {
 		})
 	}
 	sortByShareDesc(out)
-	return out
+	return RenormalizePlatformShares(out, f.Platforms)
 }
 
 // ============================================================
 // 赛道粉丝分布(按粉丝量聚合, M 量级)
 // ============================================================
-func CreatorTracks() []model.TrackPerformance {
-	list := CreatorList()
+func CreatorTracks(f model.Filter) []model.TrackPerformance {
+	list := CreatorList(model.Filter{})
 	m := map[string]int64{}
 	for _, c := range list {
 		t := strings.TrimPrefix(c.Tags[0], "#")
@@ -123,14 +124,14 @@ func CreatorTracks() []model.TrackPerformance {
 			Color: TrackColor(t),
 		})
 	}
-	return out
+	return RenormalizeTrackShares(out, f.Tracks)
 }
 
 // ============================================================
 // 粉丝画像(年龄 + 性别)
 // ============================================================
-func CreatorAudience() model.Audience {
-	return model.Audience{
+func CreatorAudience(f model.Filter) model.Audience {
+	a := model.Audience{
 		Age: []model.AgeShare{
 			{Bucket: "18-24 岁", Share: 33.5, Color: AgeColor("18-24 岁")},
 			{Bucket: "25-34 岁", Share: 41.2, Color: AgeColor("25-34 岁")},
@@ -142,4 +143,6 @@ func CreatorAudience() model.Audience {
 			{Gender: "女", Share: 41.6, Color: "#FF6B6B"},
 		},
 	}
+	a.Age = RenormalizeAgeShares(a.Age, f.AgeBands)
+	return a
 }

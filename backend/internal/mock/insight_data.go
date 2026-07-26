@@ -15,14 +15,15 @@ import (
 
 // Kpi 生成 5 张总览卡的数据
 //   真实来源: dws_insight_overview_kpi (T+1 物化视图, 5 分钟刷新)
-func Kpi() []model.KpiCard {
-	return []model.KpiCard{
+func Kpi(f model.Filter) []model.KpiCard {
+	k := []model.KpiCard{
 		{Key: "creators", Label: "达人数", Value: "12,856", Raw: 12856, DeltaPct: 18.6, DeltaUp: true, Unit: "", Description: "较上期"},
 		{Key: "followers", Label: "总粉丝", Value: "287.6M", Raw: 287_600_000, DeltaPct: 21.3, DeltaUp: true, Unit: "", Description: "较上期"},
 		{Key: "views", Label: "总播放量", Value: "2.38B", Raw: 2_380_000_000, DeltaPct: 24.7, DeltaUp: true, Unit: "", Description: "较上期"},
 		{Key: "engagement", Label: "互动量", Value: "46.7M", Raw: 46_700_000, DeltaPct: 19.8, DeltaUp: true, Unit: "", Description: "较上期"},
 		{Key: "collabs", Label: "合作内容", Value: "3,682", Raw: 3682, DeltaPct: 17.2, DeltaUp: true, Unit: "", Description: "较上期"},
 	}
+	return ScaleKpis(k, f)
 }
 
 // ============================================================
@@ -30,7 +31,7 @@ func Kpi() []model.KpiCard {
 // ============================================================
 
 // ViewsTrend 生成近 30 天的播放量 + 上周期对比 + 异常点
-func ViewsTrend() []model.ViewsTrendPoint {
+func ViewsTrend(f model.Filter) []model.ViewsTrendPoint {
 	cur := TrendGenerator(30)
 	// 上周期 = 往前 30 天,整体略低
 	prev := make([]int64, len(cur))
@@ -61,7 +62,7 @@ func ViewsTrend() []model.ViewsTrendPoint {
 		}
 		points = append(points, p)
 	}
-	return points
+	return WindowTrend(points, f)
 }
 
 // timeFormat 把第 i 个点的日期格式化为 MM-DD
@@ -76,7 +77,7 @@ func timeFormat(_ []int64, i int) string {
 
 // PlatformShare 生成平台分布
 //   真实来源: dws_instight_platform_share
-func PlatformShare() []model.PlatformShare {
+func PlatformShare(f model.Filter) []model.PlatformShare {
 	views := map[string]int64{
 		"抖音":   1_247_000_000,
 		"B站":    638_000_000,
@@ -97,7 +98,7 @@ func PlatformShare() []model.PlatformShare {
 	}
 	// 按 share 倒序,UI 显示更顺眼
 	sortByShareDesc(out)
-	return out
+	return RenormalizePlatformShares(out, f.Platforms)
 }
 
 // ============================================================
@@ -105,7 +106,7 @@ func PlatformShare() []model.PlatformShare {
 // ============================================================
 
 // TrackPerformance 生成赛道横向条形
-func TrackPerformance() []model.TrackPerformance {
+func TrackPerformance(f model.Filter) []model.TrackPerformance {
 	data := []model.TrackPerformance{
 		{Track: "滑雪", Views: 878_000_000, Color: TrackColor("滑雪")},
 		{Track: "冲浪", Views: 642_000_000, Color: TrackColor("冲浪")},
@@ -113,7 +114,7 @@ func TrackPerformance() []model.TrackPerformance {
 		{Track: "潜水", Views: 228_000_000, Color: TrackColor("潜水")},
 		{Track: "攀岩", Views: 176_000_000, Color: TrackColor("攀岩")},
 	}
-	return data
+	return RenormalizeTrackShares(data, f.Tracks)
 }
 
 // ============================================================
@@ -121,7 +122,7 @@ func TrackPerformance() []model.TrackPerformance {
 // ============================================================
 
 // ExplosiveRadar 生成 4 维引爆力
-func ExplosiveRadar() []model.RadarMetric {
+func ExplosiveRadar(f model.Filter) []model.RadarMetric {
 	return []model.RadarMetric{
 		{Dimension: "内容质量", Value: 92, Avg: 78},
 		{Dimension: "粉丝互动力", Value: 78, Avg: 70},
@@ -136,14 +137,14 @@ func ExplosiveRadar() []model.RadarMetric {
 // ============================================================
 
 // AgeShare 粉丝画像
-func AgeShare() []model.AgeShare {
+func AgeShare(f model.Filter) []model.AgeShare {
 	data := []model.AgeShare{
 		{Bucket: "18-24 岁", Share: 31.2, Color: AgeColor("18-24 岁")},
 		{Bucket: "25-34 岁", Share: 42.7, Color: AgeColor("25-34 岁")},
 		{Bucket: "35-44 岁", Share: 17.3, Color: AgeColor("35-44 岁")},
 		{Bucket: "45 岁以上", Share: 8.8, Color: AgeColor("45 岁以上")},
 	}
-	return data
+	return RenormalizeAgeShares(data, f.AgeBands)
 }
 
 // ============================================================
@@ -152,7 +153,7 @@ func AgeShare() []model.AgeShare {
 
 // AIInsights 默认 3 条洞察(无大模型时返回)
 //   真实来源: AI 引擎 (/api/ai/insights) 返回或离线预生成
-func AIInsights() []model.Insight {
+func AIInsights(f model.Filter) []model.Insight {
 	return []model.Insight{
 		{
 			Icon:     "surge",
@@ -180,8 +181,8 @@ func AIInsights() []model.Insight {
 // ============================================================
 
 // TopCreators 生成热门达人列表
-func TopCreators() []model.TopCreator {
-	return []model.TopCreator{
+func TopCreators(f model.Filter) []model.TopCreator {
+	out := []model.TopCreator{
 		{Rank: 1, Avatar: "🤿", Name: "Chris Burkard", Platform: "抖音", Followers: 1_020_000, TotalViews: 186_300_000, Engagement: 6.72, Growth30d: 12.4, Explosive: 89.7, Tags: []string{"#骑行", "#极限", "#摄影"}},
 		{Rank: 2, Avatar: "🚴", Name: "Sophie Laurent", Platform: "小红书", Followers: 326_800, TotalViews: 64_200_000, Engagement: 8.91, Growth30d: 18.7, Explosive: 88.6, Tags: []string{"#冲浪", "#滑翔伞", "#生活方式"}},
 		{Rank: 3, Avatar: "⛷️", Name: "Jake Wetter", Platform: "抖音", Followers: 48_700, TotalViews: 18_600_000, Engagement: 12.38, Growth30d: 42.3, Blacklist: true, Explosive: 91.2, Tags: []string{"#滑雪", "#极限运动", "#户外"}},
@@ -193,6 +194,7 @@ func TopCreators() []model.TopCreator {
 		{Rank: 9, Avatar: "🏃", Name: "Marco Rivera", Platform: "抖音", Followers: 312_400, TotalViews: 52_300_000, Engagement: 5.96, Growth30d: 4.7, Explosive: 76.8, Tags: []string{"#越野跑", "#训练", "#营养"}},
 		{Rank: 10, Avatar: "🎿", Name: "Elena Petrova", Platform: "小红书", Followers: 198_500, TotalViews: 28_700_000, Engagement: 9.74, Growth30d: 11.9, Explosive: 84.3, Tags: []string{"#滑雪", "#阿尔卑斯", "#度假"}},
 	}
+	return FilterTopCreators(out, f)
 }
 
 // ============================================================
@@ -200,7 +202,7 @@ func TopCreators() []model.TopCreator {
 // ============================================================
 
 // FilterOptions 返回筛选面板下拉数据
-func FilterOptions() model.FilterOptions {
+func FilterOptions(f model.Filter) model.FilterOptions {
 	return model.FilterOptions{
 		Regions: toOptions(Regions),
 		Tracks:  toOptions(Tracks),
