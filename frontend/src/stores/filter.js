@@ -16,6 +16,12 @@ export const useFilterStore = defineStore('filter', () => {
   // 时间粒度: day / week / month (用于趋势图切换)
   const granularity = ref('day')
 
+  // 侧栏是否收起（仅控制 UI 显隐, 与筛选条件无关; 默认展开）
+  const collapsed = ref(false)
+  function toggleCollapsed() {
+    collapsed.value = !collapsed.value
+  }
+
   // 联动信号: 每次 apply 自增, 各数据页 watch 此值触发重拉
   const appliedRevision = ref(0)
   // 已应用快照(用于脏检查)
@@ -75,6 +81,7 @@ export const useFilterStore = defineStore('filter', () => {
 
   return {
     dateRange, regions, tracks, platforms, ageBands, granularity,
+    collapsed, toggleCollapsed,
     appliedRevision, appliedState, toQuery, apply, reset, isDirty
   }
 })
