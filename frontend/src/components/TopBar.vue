@@ -29,6 +29,14 @@
 
     <!-- 右侧操作区 -->
     <div class="right">
+      <!-- 侧栏收起/展开(vscode 风格) -->
+      <button class="panel-toggle" type="button"
+              @click="filter.toggleCollapsed"
+              :title="filter.collapsed ? '展开筛选' : '收起筛选'"
+              :aria-label="filter.collapsed ? '展开筛选' : '收起筛选'">
+        <el-icon><component :is="filter.collapsed ? Expand : Fold" /></el-icon>
+      </button>
+
       <el-date-picker
         v-model="filter.dateRange"
         type="daterange"
@@ -78,7 +86,7 @@
 <script setup>
 import { computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { Calendar, User, SwitchButton, EditPen, DataLine, Film, Position, Tickets } from '@element-plus/icons-vue'
+import { Calendar, User, SwitchButton, EditPen, DataLine, Film, Position, Tickets, Fold, Expand } from '@element-plus/icons-vue'
 import { useFilterStore } from '../stores/filter'
 import { useAuthStore } from '../stores/auth'
 import { ElMessage } from 'element-plus'
@@ -197,6 +205,22 @@ function onCommand(cmd) {
   display: flex;
   align-items: center;
   gap: 10px;
+}
+.panel-toggle {
+  width: 32px;
+  height: 32px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+  .el-icon { font-size: 15px; }
+  &:hover { color: var(--brand); border-color: rgba(61, 217, 235, 0.4); }
+  &:focus-visible { outline: 2px solid var(--brand); outline-offset: 1px; }
 }
 .date {
   width: 240px;
