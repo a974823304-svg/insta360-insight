@@ -219,7 +219,7 @@ function onCommand(cmd) {
   cursor: pointer;
   transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
   .el-icon { font-size: 15px; }
-  &:hover { color: var(--brand); border-color: rgba(61, 217, 235, 0.4); }
+  &:hover { color: var(--brand); border-color: color-mix(in srgb, var(--brand) 40%, transparent); }
   &:focus-visible { outline: 2px solid var(--brand); outline-offset: 1px; }
 }
 .date {
