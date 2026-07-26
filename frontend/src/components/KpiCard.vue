@@ -36,7 +36,24 @@ const META = {
   views:      { icon: '▶', from: '#3DD9EB', to: '#7DD96E' },
   engagement: { icon: '❤', from: '#FF6B6B', to: '#FFB547' },
   collabs:    { icon: '📄', from: '#FFB547', to: '#FF6B6B' },
-  new:       { icon: '✨', from: '#7DD96E', to: '#3DD9EB' }
+  new:        { icon: '✨', from: '#7DD96E', to: '#3DD9EB' },
+  // 内容分析
+  total:      { icon: '📦', from: '#3DD9EB', to: '#7DD96E' },
+  avg_views:  { icon: '👁', from: '#5EA1FF', to: '#3DD9EB' },
+  hit_rate:   { icon: '🔥', from: '#FF6B6B', to: '#FFB547' },
+  engage:     { icon: '💬', from: '#FF6B6B', to: '#A07BFF' },
+  freq:       { icon: '🔄', from: '#A07BFF', to: '#5EA1FF' },
+  // 市场洞察
+  size:       { icon: '💰', from: '#FFB547', to: '#FF6B6B' },
+  growth:     { icon: '📈', from: '#7DD96E', to: '#3DD9EB' },
+  share:      { icon: '🏷', from: '#5EA1FF', to: '#A07BFF' },
+  comp:       { icon: '⚔', from: '#FF6B6B', to: '#FFB547' },
+  buzz:       { icon: '🔊', from: '#3DD9EB', to: '#5EA1FF' },
+  // 品牌分析
+  sent:       { icon: '😊', from: '#7DD96E', to: '#3DD9EB' },
+  partners:   { icon: '🤝', from: '#A07BFF', to: '#5EA1FF' },
+  roi:        { icon: '💎', from: '#FFB547', to: '#3DD9EB' },
+  search:     { icon: '🔍', from: '#5EA1FF', to: '#3DD9EB' }
 }
 
 const icon = computed(() => META[props.kpi.key]?.icon || '📈')

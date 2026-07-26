@@ -10,9 +10,9 @@ const routes = [
   { path: '/insight', component: InsightDashboard, meta: { title: '数据洞察' } },
   { path: '/profile', component: () => import('../views/ProfileView.vue'), meta: { title: '个人资料', requiresAuth: true } },
   { path: '/creator', component: () => import('../views/CreatorAnalysis.vue'), meta: { title: '达人分析' } },
-  { path: '/content', component: () => import('../views/PlaceholderView.vue'), meta: { title: '内容分析' } },
-  { path: '/market', component: () => import('../views/PlaceholderView.vue'), meta: { title: '市场洞察' } },
-  { path: '/brand', component: () => import('../views/PlaceholderView.vue'), meta: { title: '品牌分析' } },
+  { path: '/content', component: () => import('../views/ContentAnalysis.vue'), meta: { title: '内容分析' } },
+  { path: '/market', component: () => import('../views/MarketInsights.vue'), meta: { title: '市场洞察' } },
+  { path: '/brand', component: () => import('../views/BrandAnalysis.vue'), meta: { title: '品牌分析' } },
   { path: '/custom', component: () => import('../views/PlaceholderView.vue'), meta: { title: '自定义看板' } }
 ]
 

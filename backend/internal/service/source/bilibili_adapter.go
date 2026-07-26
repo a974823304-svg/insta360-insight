@@ -58,3 +58,58 @@ func (a *BilibiliAdapter) CreatorAudience(_ context.Context, _ model.Filter) (*m
 func (a *BilibiliAdapter) CreatorList(_ context.Context, _ model.Filter) ([]model.TopCreator, error) {
 	return nil, ErrNotImplemented
 }
+
+func (a *BilibiliAdapter) ContentKpi(_ context.Context, _ model.Filter) ([]model.KpiCard, error) {
+	return nil, ErrNotImplemented
+}
+func (a *BilibiliAdapter) ContentTrend(_ context.Context, _ model.Filter) ([]model.ViewsTrendPoint, error) {
+	return nil, ErrNotImplemented
+}
+func (a *BilibiliAdapter) ContentForms(_ context.Context, _ model.Filter) ([]model.PlatformShare, error) {
+	return nil, ErrNotImplemented
+}
+func (a *BilibiliAdapter) ContentTopics(_ context.Context, _ model.Filter) ([]model.TrackPerformance, error) {
+	return nil, ErrNotImplemented
+}
+func (a *BilibiliAdapter) ContentDurations(_ context.Context, _ model.Filter) ([]model.AgeShare, error) {
+	return nil, ErrNotImplemented
+}
+func (a *BilibiliAdapter) ContentList(_ context.Context, _ model.Filter) ([]model.ContentItem, error) {
+	return nil, ErrNotImplemented
+}
+func (a *BilibiliAdapter) MarketKpi(_ context.Context, _ model.Filter) ([]model.KpiCard, error) {
+	return nil, ErrNotImplemented
+}
+func (a *BilibiliAdapter) MarketTrend(_ context.Context, _ model.Filter) ([]model.ViewsTrendPoint, error) {
+	return nil, ErrNotImplemented
+}
+func (a *BilibiliAdapter) MarketCompetitors(_ context.Context, _ model.Filter) ([]model.PlatformShare, error) {
+	return nil, ErrNotImplemented
+}
+func (a *BilibiliAdapter) MarketRegions(_ context.Context, _ model.Filter) ([]model.TrackPerformance, error) {
+	return nil, ErrNotImplemented
+}
+func (a *BilibiliAdapter) MarketPrices(_ context.Context, _ model.Filter) ([]model.AgeShare, error) {
+	return nil, ErrNotImplemented
+}
+func (a *BilibiliAdapter) MarketList(_ context.Context, _ model.Filter) ([]model.Competitor, error) {
+	return nil, ErrNotImplemented
+}
+func (a *BilibiliAdapter) BrandKpi(_ context.Context, _ model.Filter) ([]model.KpiCard, error) {
+	return nil, ErrNotImplemented
+}
+func (a *BilibiliAdapter) BrandTrend(_ context.Context, _ model.Filter) ([]model.ViewsTrendPoint, error) {
+	return nil, ErrNotImplemented
+}
+func (a *BilibiliAdapter) BrandPlatforms(_ context.Context, _ model.Filter) ([]model.PlatformShare, error) {
+	return nil, ErrNotImplemented
+}
+func (a *BilibiliAdapter) BrandSentiment(_ context.Context, _ model.Filter) ([]model.AgeShare, error) {
+	return nil, ErrNotImplemented
+}
+func (a *BilibiliAdapter) BrandKeywords(_ context.Context, _ model.Filter) ([]model.TagItem, error) {
+	return nil, ErrNotImplemented
+}
+func (a *BilibiliAdapter) BrandList(_ context.Context, _ model.Filter) ([]model.PartnerBrand, error) {
+	return nil, ErrNotImplemented
+}

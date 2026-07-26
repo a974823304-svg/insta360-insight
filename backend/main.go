@@ -25,6 +25,9 @@ func main() {
 	insightSvc := service.NewInsightService(adapter)
 	aiSvc := service.NewAIService(adapter)
 	creatorSvc := service.NewCreatorService(adapter)
+	contentSvc := service.NewContentService(adapter)
+	marketSvc := service.NewMarketService(adapter)
+	brandSvc := service.NewBrandService(adapter)
 
 	// 3. 账号与鉴权(阶段一)
 	jwtSecret := os.Getenv("JWT_SECRET")
@@ -64,7 +67,7 @@ func main() {
 	}
 
 	// 4. 注册路由 & 全局中间件(鉴权在 router 内部按组挂载)
-	engine := router.New(insightSvc, aiSvc, authSvc, creatorSvc, disableAuth, devUser, avatarDir)
+	engine := router.New(insightSvc, aiSvc, authSvc, creatorSvc, contentSvc, marketSvc, brandSvc, disableAuth, devUser, avatarDir)
 	engine.Use(middleware.CORS(), middleware.AccessLog())
 
 	// 5. 启动 HTTP 服务,监听 8080

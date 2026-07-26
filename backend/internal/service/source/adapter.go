@@ -31,4 +31,28 @@ type DataSource interface {
 	CreatorTracks(ctx context.Context, f model.Filter) ([]model.TrackPerformance, error)
 	CreatorAudience(ctx context.Context, f model.Filter) (*model.Audience, error)
 	CreatorList(ctx context.Context, f model.Filter) ([]model.TopCreator, error)
+
+	// 内容分析域
+	ContentKpi(ctx context.Context, f model.Filter) ([]model.KpiCard, error)
+	ContentTrend(ctx context.Context, f model.Filter) ([]model.ViewsTrendPoint, error)
+	ContentForms(ctx context.Context, f model.Filter) ([]model.PlatformShare, error)
+	ContentTopics(ctx context.Context, f model.Filter) ([]model.TrackPerformance, error)
+	ContentDurations(ctx context.Context, f model.Filter) ([]model.AgeShare, error)
+	ContentList(ctx context.Context, f model.Filter) ([]model.ContentItem, error)
+
+	// 市场洞察域
+	MarketKpi(ctx context.Context, f model.Filter) ([]model.KpiCard, error)
+	MarketTrend(ctx context.Context, f model.Filter) ([]model.ViewsTrendPoint, error)
+	MarketCompetitors(ctx context.Context, f model.Filter) ([]model.PlatformShare, error)
+	MarketRegions(ctx context.Context, f model.Filter) ([]model.TrackPerformance, error)
+	MarketPrices(ctx context.Context, f model.Filter) ([]model.AgeShare, error)
+	MarketList(ctx context.Context, f model.Filter) ([]model.Competitor, error)
+
+	// 品牌分析域
+	BrandKpi(ctx context.Context, f model.Filter) ([]model.KpiCard, error)
+	BrandTrend(ctx context.Context, f model.Filter) ([]model.ViewsTrendPoint, error)
+	BrandPlatforms(ctx context.Context, f model.Filter) ([]model.PlatformShare, error)
+	BrandSentiment(ctx context.Context, f model.Filter) ([]model.AgeShare, error)
+	BrandKeywords(ctx context.Context, f model.Filter) ([]model.TagItem, error)
+	BrandList(ctx context.Context, f model.Filter) ([]model.PartnerBrand, error)
 }
