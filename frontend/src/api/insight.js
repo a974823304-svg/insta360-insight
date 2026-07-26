@@ -2,10 +2,9 @@
 // 全部走 /api 代理(前端 dev server 5173 -> 后端 8080)
 import request from './request'
 
-// querystring 序列化时, axios 会自动把数组参数重复展开为同名 key
-// 例如: { date_range: ['2024-01-01', '2024-01-31'] }
-//        -> ?date_range=2024-01-01&date_range=2024-01-31
-//        后端用 c.QueryArray 接收, 完美匹配
+// querystring 序列化由 request.js 的自定义 paramsSerializer 处理:
+// 数组参数展开为同名 key 重复(platforms=抖音&platforms=B站), 不带 [] 后缀,
+// 与后端 gin c.QueryArray("platforms") 完美匹配。
 
 const insight = {
   kpi: (q) => request.get('/kpi', { params: q }).then(r => r.data),

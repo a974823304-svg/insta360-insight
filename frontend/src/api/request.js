@@ -1,9 +1,31 @@
 import axios from 'axios'
 
+// 自定义 querystring 序列化:
+// 数组参数展开为「同名 key 重复」(platforms=抖音&platforms=B站), 而非 axios 默认的
+// platforms[]=抖音。后端 gin 的 c.QueryArray("platforms") 只读裸 key, 不认 [] 后缀,
+// 若保留默认格式, 筛选条件会悄无声息地丢失(后端收到空数组 -> 不缩放/不过滤)。
+function serializeParams(params) {
+  const pairs = []
+  const enc = (k, v) => `${encodeURIComponent(k)}=${encodeURIComponent(v)}`
+  Object.keys(params || {}).forEach((k) => {
+    const v = params[k]
+    if (v === null || v === undefined) return
+    if (Array.isArray(v)) {
+      v.forEach((item) => pairs.push(enc(k, item)))
+    } else if (typeof v === 'object') {
+      pairs.push(enc(k, JSON.stringify(v)))
+    } else {
+      pairs.push(enc(k, v))
+    }
+  })
+  return pairs.join('&')
+}
+
 // 统一网络请求封装：请求拦截器注入 Token，响应拦截器统一错误处理
 const request = axios.create({
   baseURL: '/api',
-  timeout: 10000
+  timeout: 10000,
+  paramsSerializer: { serialize: serializeParams }
 })
 
 request.interceptors.request.use(

@@ -99,7 +99,15 @@
         <div class="muted">粉丝量级 / 合作次数 / 配合度 — 后续可下钻</div>
       </el-collapse-item>
       <el-collapse-item title="粉丝画像" name="audience">
-        <div class="muted">年龄 / 性别 / 地域 / 兴趣标签</div>
+        <div class="chips">
+          <button
+            v-for="b in store.options.ageBands"
+            :key="b.value"
+            class="chip"
+            :class="{ active: filter.ageBands.includes(b.value) }"
+            @click="toggle('ageBands', b.value)"
+          >{{ b.label }}</button>
+        </div>
       </el-collapse-item>
     </el-collapse>
 
@@ -121,6 +129,7 @@
 
     <div class="footer">
       <el-button type="primary" size="small" class="apply" @click="onApply">应用筛选</el-button>
+      <span v-if="filter.isDirty" class="dirty">● 有未应用更改</span>
     </div>
   </aside>
 </template>
@@ -177,8 +186,8 @@ function onReset() {
   filter.reset()
 }
 
-async function onApply() {
-  await store.loadAll()
+function onApply() {
+  filter.apply() // 只发联动信号, 各数据页 watch appliedRevision 自行重拉
 }
 
 function emojiOf(track) {
@@ -430,6 +439,13 @@ function platformBg(p) {
   border-top: 1px solid var(--border);
   .apply {
     width: 100%;
+  }
+  .dirty {
+    display: block;
+    margin-top: 6px;
+    text-align: center;
+    color: var(--brand);
+    font-size: 10px;
   }
 }
 </style>

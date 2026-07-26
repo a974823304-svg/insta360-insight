@@ -85,7 +85,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted, computed, watch } from 'vue'
 import { useFilterStore } from '../stores/filter'
 import { useCreatorStore } from '../stores/creator'
 
@@ -108,6 +108,8 @@ const filteredList = computed(() => {
 })
 
 onMounted(() => store.loadAll())
+// 筛选应用后自动重拉本页数据
+watch(() => filter.appliedRevision, () => store.loadAll())
 </script>
 
 <style lang="scss" scoped>

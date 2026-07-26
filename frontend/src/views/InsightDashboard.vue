@@ -112,7 +112,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted, computed, watch } from 'vue'
 import { useFilterStore } from '../stores/filter'
 import { useInsightStore } from '../stores/insight'
 
@@ -139,6 +139,8 @@ onMounted(() => {
   // 第一次进入:并行拉所有数据
   store.loadAll()
 })
+// 筛选应用后(应用筛选按钮)自动重拉本页数据
+watch(() => filter.appliedRevision, () => store.loadAll())
 </script>
 
 <style lang="scss" scoped>
