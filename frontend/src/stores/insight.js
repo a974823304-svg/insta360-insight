@@ -4,7 +4,7 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import insightApi from '../api/insight'
-import fallback from '../api/fallback-data'
+import demoReal from '../api/demo-real-data'
 import { useFilterStore } from './filter'
 
 export const useInsightStore = defineStore('insight', () => {
@@ -20,19 +20,20 @@ export const useInsightStore = defineStore('insight', () => {
   const age = ref([])
   const insights = ref([])
   const topCreators = ref([])
-  const options = ref(fallback.options)
+  const options = ref(demoReal.options)
 
-  // 立即用 fallback 填充,让 UI 不会空白
+  // 立即用 demo-real 填充(形状等价于抖音真实映射输出),让 UI 不会空白。
+  // 后端可达时 loadAll() 会用真实数据覆盖; 后端不可达则保持 demo-real。
   function fillWithFallback() {
-    kpi.value = fallback.kpi
-    viewsTrend.value = fallback.viewsTrend
-    platformShare.value = fallback.platformShare
-    tracks.value = fallback.tracks
-    radar.value = fallback.radar
-    age.value = fallback.age
-    insights.value = fallback.insights
-    topCreators.value = fallback.topCreators
-    options.value = fallback.options
+    kpi.value = demoReal.kpi
+    viewsTrend.value = demoReal.viewsTrend
+    platformShare.value = demoReal.platformShare
+    tracks.value = demoReal.tracks
+    radar.value = demoReal.radar
+    age.value = demoReal.age
+    insights.value = demoReal.insights
+    topCreators.value = demoReal.topCreators
+    options.value = demoReal.options
     usedFallback.value = true
   }
   fillWithFallback()

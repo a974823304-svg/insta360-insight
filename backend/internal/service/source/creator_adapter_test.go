@@ -16,7 +16,7 @@ func TestCreatorMockReturnsData(t *testing.T) {
 }
 
 func TestCreatorStubReturnsNotImplemented(t *testing.T) {
-	a := NewDouyinAdapter()
+	a := NewDouyinAdapter(PlatformConfig{})
 	_, err := a.CreatorList(context.Background(), model.Filter{})
 	if !errors.Is(err, ErrNotImplemented) {
 		t.Fatalf("抖音空壳应返回 ErrNotImplemented, 实际 %v", err)

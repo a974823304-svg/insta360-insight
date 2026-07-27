@@ -70,7 +70,7 @@ func TestAnalysisMockAllReturn(t *testing.T) {
 }
 
 func TestAnalysisStubAllNotImplemented(t *testing.T) {
-	a := NewDouyinAdapter()
+	a := NewDouyinAdapter(PlatformConfig{})
 	ctx := context.Background()
 	f := model.Filter{}
 	calls := []func() error{
