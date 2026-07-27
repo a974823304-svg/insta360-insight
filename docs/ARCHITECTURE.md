@@ -73,8 +73,9 @@ frontend/src/
 ## 5. 部署
 
 ### 5.1 前端（GitHub Pages，零成本）
-- `vite.config.js` 已设 `base: './'`，`frontend/dist` 推 `gh-pages` 分支 / 仓库 `/docs` 目录即可。
-- 纯静态托管，后端不可达自动降级为 `demo-real` 数据，不白屏。
+- 采用 **GitHub Actions** 自动构建发布：`.github/workflows/deploy.yml` 在 push 到 `main` 时，`npm ci` + `npm run build` 产出 `frontend/dist` 并上传 Pages。
+- `vite.config.js` 已设 `base: './'`，纯静态托管，后端不可达自动降级为 `demo-real` 数据，不白屏。
+- 需先在仓库 **Settings → Pages → Source 选 "GitHub Actions"**（见 [GitHub Pages 部署指引](./GITHUB_PAGES_DEPLOY.md)）。
 - 预期地址：`https://a974823304-syg.github.io/insta360-insight/`。
 
 ### 5.2 后端 / AI（本地，不部署公网）

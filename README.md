@@ -69,7 +69,7 @@
 
 前端构建产物已配置 `base: './'`，纯静态托管即可运行，后端不可达时自动降级为 `demo-real` 数据，**不会出现白屏**。
 
-- 预期地址：`https://a974823304-syg.github.io/insta360-insight/`（部署后生效，见 [ARCHITECTURE.md](./docs/ARCHITECTURE.md) 部署章节）
+- 预期地址：`https://a974823304-syg.github.io/insta360-insight/`（部署后生效，详见 [GitHub Pages 部署指引](./docs/GITHUB_PAGES_DEPLOY.md)）
 - 真实后端（Go + Python）仅在本地运行演示，不部署公网（省钱）。
 
 ---
