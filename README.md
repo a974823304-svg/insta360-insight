@@ -1,148 +1,163 @@
-# Insta360 达人营销数据洞察平台 — Demo 原型
+# Insta360 达人营销数据洞察平台
 
-> 最小可运行 Demo。前端按 UI 效果图 v1 复刻"数据洞察"主页面,后端 / AI 引擎均为可独立运行的最小骨架,真实 OLAP / 大模型可平滑替换。
+> 面向**全栈开发岗位面试**的数据可视化分析平台 Demo。
+> 定位：用一套**可插拔的数据接入层**，把「Mock 演示数据」与「真实平台（抖音 / B站 / 小红书）API」统一抽象，凭证缺失自动降级，凭证到位无需改代码即可切换真实数据。
 
-## 目录结构
+[在线演示（GitHub Pages，上线后生效）](https://a974823304-syg.github.io/insta360-insight/) · [架构说明](./docs/ARCHITECTURE.md) · [面试讲解清单](./docs/INTERVIEW_CHECKLIST.md) · [真实数据接入指南](./docs/真实数据接入指南.md)
 
-```
-F:\workbuddy\影石\
-├── README.md                   # 本文件
-├── 环境安装保姆级指南.md          # Go / VC++ 安装教程
-├── backend/                    # Go (Gin) 后端
-│   ├── main.go
-│   ├── go.mod / go.sum
-│   ├── internal/
-│   │   ├── api/
-│   │   │   ├── handler/         # HTTP 处理器 (health / insight)
-│   │   │   └── router/          # 路由注册
-│   │   ├── service/             # 业务逻辑 (insight / ai)
-│   │   ├── mock/                # 演示数据(后续替换为 ClickHouse)
-│   │   ├── model/               # 数据结构 + JSON 契约
-│   │   └── middleware/          # CORS / AccessLog
-│   └── README.md
-├── frontend/                   # Vue 3 + Vite + Element Plus + ECharts
-│   ├── package.json
-│   ├── vite.config.js
-│   ├── index.html
-│   ├── src/
-│   │   ├── main.js
-│   │   ├── App.vue
-│   │   ├── styles/theme.scss    # 暗色主题变量
-│   │   ├── router/              # 路由
-│   │   ├── stores/              # Pinia (filter / insight)
-│   │   ├── api/                 # axios 封装 + insight API
-│   │   ├── components/          # 10 个组件(顶栏/侧栏/图表/表格)
-│   │   └── views/               # 页面(InsightDashboard + 占位页)
-│   └── README.md
-└── ai/                         # Python FastAPI 智能洞察引擎
-    ├── main.py
-    ├── requirements.txt
-    ├── api/                    # /v1/insights 路由
-    ├── core/                   # FeatureExtractor / PromptBuilder / LLMClient / InsightEngine
-    └── models/                 # Pydantic 契约
-```
+---
 
-## 模块职责一览
+## 1. 技术栈
 
-| 模块 | 关键文件 | 职责 |
+| 层 | 技术 | 说明 |
 | --- | --- | --- |
-| 前端 - 顶栏 | `components/TopBar.vue` | Logo / 6 个 Tab / 日期 / 导出 / 头像 |
-| 前端 - 侧栏 | `components/SideFilter.vue` | 时间/地区/赛道/平台/达人属性/粉丝画像 + 应用筛选 |
-| 前端 - KPI | `components/KpiCard.vue` × 5 | 5 张总览卡(达人数/总粉丝/总播放/互动/合作) |
-| 前端 - 趋势 | `components/TrendChart.vue` | 当期 vs 上周期 + AI 异常点 |
-| 前端 - 平台分布 | `components/PlatformDonut.vue` | 环形图 + 图例 |
-| 前端 - 赛道表现 | `components/TrackBarChart.vue` | 横向条形 + 渐变 |
-| 前端 - 引爆力 | `components/RadarChart.vue` | 雷达(当前 vs 均值) |
-| 前端 - 粉丝画像 | `components/AgeDonut.vue` | 环形(总粉丝居中) |
-| 前端 - 达人表 | `components/TopCreatorsTable.vue` | 排序 + 搜索 + 黑名单标记 |
-| 前端 - 状态 | `stores/filter.js` `stores/insight.js` | Pinia 全局筛选 / 数据 |
-| 后端 - 入口 | `main.go` | 装载 dataset / service / router |
-| 后端 - 处理器 | `internal/api/handler/insight.go` | 9 个 REST 接口,瘦层 |
-| 后端 - 业务 | `internal/service/insight_service.go` | 业务装配,接受 Filter |
-| 后端 - Mock | `internal/mock/*` | 演示数据集(确定性的) |
-| AI - 引擎 | `ai/core/insight_engine.py` | 主流程:特征→Prompt→LLM→兜底 |
-| AI - 特征 | `ai/core/feature_extractor.py` | 提取 7 类业务特征 |
-| AI - Prompt | `ai/core/prompt_builder.py` | 拼装 + 解析 JSON 响应 |
-| AI - LLM | `ai/core/llm_client.py` | 通义千问 / OpenAI 统一抽象 |
+| 前端 | Vue 3 + Vite + Element Plus + Pinia + Axios + ECharts（暗色主题） | GitHub Pages 静态托管，后端不可达时优雅降级 |
+| 后端 | Go (Gin) | 可插拔 `DataSource` 适配器 + JWT 鉴权 + SQLite |
+| AI 引擎 | Python (FastAPI + dashscope / openai) | 规则兜底 + 可接大模型生成洞察 |
+| 数据存储 | Mock 内存数据；生产候选 OLAP：ClickHouse / Doris | 用户存储：SQLite（纯 Go，无 CGO） |
 
-## 快速开始
+---
 
-完整启动需 **3 个终端**。完整步骤见《环境安装保姆级指南.md》。
+## 2. 架构总览
 
-### 终端 1:后端
-```powershell
-cd F:\workbuddy\影石\backend
+```
+                         ┌─────────────────────────────────────┐
+                         │           前端 Vue3 + ECharts         │
+                         │  看板 / 筛选联动 / 后端不可达自动降级    │
+                         └───────────────┬─────────────────────┘
+                                         │  /api/*  (统一 {code,data} 信封)
+                         ┌───────────────▼─────────────────────┐
+                         │          Go 后端 (Gin)               │
+                         │  ┌───────────────────────────────┐  │
+                         │  │  service.DataSource 接口        │  │
+                         │  │   ├─ MockAdapter（演示数据）      │  │
+                         │  │   ├─ DouyinAdapter  ──┐          │  │
+                         │  │   ├─ BilibiliAdapter ─┤ fallback │  │
+                         │  │   └─ XiaohongshuAdapter┘ 装饰器   │  │
+                         │  │      ↓ 真实方法 ErrNotImplemented │  │
+                         │  │      ↓ 或任意 error → 自动回退 Mock│ │
+                         │  └───────────────────────────────┘  │
+                         │  JWT 鉴权 · SQLite 用户 · CORS        │
+                         └───────────────┬─────────────────────┘
+                                         │  /v1/insights
+                         ┌───────────────▼─────────────────────┐
+                         │     Python AI 引擎 (FastAPI)          │
+                         │  特征提取 → Prompt → LLM → 规则兜底    │
+                         └─────────────────────────────────────┘
+```
+
+**核心设计点**：定义 `DataSource` 接口，Mock 与三平台真实适配器实现同一契约；外层 `FallbackDataSource` 装饰器在真实方法返回 `ErrNotImplemented`（无凭证 / 未实现）或任意错误时，自动回退 Mock —— 看板永远有数据、不崩。
+
+---
+
+## 3. 真实数据接入（项目最大亮点）
+
+真实平台「全网达人营销汇总数据」被企业资质 + 消耗门槛锁死（小红书蒲公英需近一年消耗 > 500 万、抖音星图需蓝 V + 保证金），个人身份基本拿不到。本项目因此采用**「代码就绪、凭证可插拔」**策略：
+
+- **抖音洞察域已写实**：`Kpi` + `ViewsTrend` 按真实 API 响应形状做字段映射，支持两种免费 token 模式：
+  - `client_token`（应用级公开 token，个人可申）：拉公开发现类数据；
+  - 用户授权 `access_token`：拉**你自己账号**的真实粉丝 / 播放 / 互动数据。
+- **测试即证据**：`backend/internal/service/source/real_insight_test.go` 用 `httptest` 起「假抖音服务器」，喂**真实形状的响应 JSON**，断言适配器映射正确。**无需任何凭证即可 `go test` 验证「适配器真对接了真实平台结构，不是假接口」**。
+- **前端演示诚实**：GitHub Pages 静态站用 `demo-real-data.js`（形状等价于真实映射输出）演示；README 与代码注释都写明：「有凭证时同一套代码经后端适配器返回的就是实时真数据」。
+- **切换零代码**：拿到任意凭证（哪怕是自己的创作者 token），填进 `backend/.env`（参考 `backend/.env.example`），改一行 `SOURCE` 即可切真实数据。
+
+详见 [真实数据接入指南](./docs/真实数据接入指南.md)。
+
+---
+
+## 4. 在线演示（GitHub Pages）
+
+前端构建产物已配置 `base: './'`，纯静态托管即可运行，后端不可达时自动降级为 `demo-real` 数据，**不会出现白屏**。
+
+- 预期地址：`https://a974823304-syg.github.io/insta360-insight/`（部署后生效，见 [ARCHITECTURE.md](./docs/ARCHITECTURE.md) 部署章节）
+- 真实后端（Go + Python）仅在本地运行演示，不部署公网（省钱）。
+
+---
+
+## 5. 本地全栈运行（可选，用于看真实后端 / 跑测试）
+
+完整启动需要 3 个终端。Go 工具链本机已配置 `GOPROXY=goproxy.cn`，`go build` / `go test` 可直接跑通。
+
+### 终端 1：后端（Go，:8080）
+```bash
+cd backend
 go mod tidy
 go run main.go
-# 监听 http://localhost:8080
 ```
 
-### 终端 2:AI 引擎(可选,无 LLM 也可跑)
-```powershell
-cd F:\workbuddy\影石
-python -m venv .venv
-.venv\Scripts\activate
+### 终端 2：AI 引擎（Python，:9000，可选）
+```bash
+cd .
+python -m venv .venv && .venv/Scripts/activate
 pip install -r ai/requirements.txt
 python -m ai.main
-# 监听 http://localhost:9000
 ```
 
-### 终端 3:前端
-```powershell
-cd F:\workbuddy\影石\frontend
+### 终端 3：前端（Vue，:5173）
+```bash
+cd frontend
 npm install
 npm run dev
 # 打开 http://localhost:5173
 ```
 
-## 核心 API 一览
+### 跑后端测试（面试硬通货）
+```bash
+cd backend
+go test ./...
+# 含 real_insight_test.go：httptest 模拟抖音真实响应，证明映射层正确
+```
+
+---
+
+## 6. 核心 API 一览
 
 | Method | Path | 用途 |
 | --- | --- | --- |
 | GET | `/api/health` | 健康检查 |
 | GET | `/api/filters/options` | 筛选面板可选项 |
-| GET | `/api/kpi` | 5 张总览卡 |
-| GET | `/api/views-trend` | 近 30 天播放量 + 上周期 + 异常点 |
+| GET | `/api/kpi` | 总览 KPI 卡 |
+| GET | `/api/views-trend` | 播放趋势 + 环比 + 异常点 |
 | GET | `/api/platform-distribution` | 平台占比 |
-| GET | `/api/track-performance` | 运动赛道表现 |
+| GET | `/api/track-performance` | 赛道表现 |
 | GET | `/api/explosive-radar` | 引爆力雷达 |
 | GET | `/api/audience-age` | 粉丝年龄画像 |
 | GET | `/api/insights` | AI 关键洞察 |
-| GET | `/api/top-creators` | 热门达人 TOP 10 |
-| POST | `http://localhost:9000/v1/insights` | (Python AI 引擎)业务洞察生成 |
+| GET | `/api/top-creators` | 热门达人 TOP |
+| GET | `/api/{content,market,brand}/*` | 内容 / 市场 / 品牌分析域 |
 
-所有 `/api/*` 都支持 querystring 筛选: `date_range`, `regions`, `tracks`, `platforms`, `age_bands`。
+所有 `/api/*` 支持多选筛选：`date_range`、`regions`、`tracks`、`platforms`、`age_bands`。
 
-## 验证 Demo
+---
 
-打开 `http://localhost:5173` 应能看到:
-1. 顶部 Insta360 Logo + 6 个 Tab + 日期选择 + 导出报告
-2. 左侧 5 类筛选面板 + "应用筛选"按钮
-3. 数据总览 5 个 KPI 卡片(达人数 / 总粉丝 / 总播放量 / 互动量 / 合作内容)
-4. 趋势分析折线图(蓝实线 + 灰虚线 + AI 异常点)
-5. 关键洞察列表(3 条 AI 提示)
-6. 平台分布环形图 / 赛道条形图 / 引爆力雷达图(三联)
-7. 粉丝画像环形图 + 热门达人 TOP 10 表格
+## 7. 已知边界（诚实说明）
 
-## 与架构文档的对应
+- 个人账号 **live 拉不到**「全网达人营销汇总」（企业资质 / 消耗门槛）；本项目真实域聚焦「你自己账号的真实数据」+ 公开数据，架构已为汇总数据预留接入位。
+- 三平台响应字段名基于公开 / 文档结构的合理实现，上线前以官方最新文档为准。
+- 前端演示数据为「真实映射输出同构」的合成数据，非实时真数据（实时真数据需上线后端 + 凭证）。
 
-| 架构层 | 当前实现 | 生产替换 |
-| --- | --- | --- |
-| OLAP 数仓 (ClickHouse / Doris) | `backend/internal/mock` 内存数据 | 物化视图 + 异步预聚合 |
-| 聚合 API | `backend/internal/service` | 不变,只把 mock 换成 ch 查询 |
-| AI 引擎 | `backend/internal/service/ai_service` 走规则 | 调 `ai/` Python FastAPI `/v1/insights` |
-| 鉴权 | JWT + SQLite（已落地，dev 可免登录） | Row-Level Security + 多角色 |
-| 缓存 | 无 | Redis(核心 KPI 1-3 min) |
-| 消息队列 | 无 | Kafka(原始事件) + Flink(实时) |
-| 容器化 | 无 | Docker + K8s |
+---
 
-## Demo 已验证
+## 8. 目录约定
 
-- ✅ 前端 `vite build` 成功 (2237 modules, 6.2s)
-- ✅ AI 引擎 Python import 全部通过,规则兜底输出 3 条洞察
-- ✅ 后端 `go build ./...` + `go test ./...` 全绿（本机 `GOPROXY=goproxy.cn` 已可编译测试，无需放行网络）
+```
+backend/internal/
+  api/{handler,router}   # HTTP 层（瘦）
+  service/source/        # DataSource 接口 + Mock/三平台 adapter + fallback + 测试
+  mock/                  # 演示数据集（确定性）
+  model/                 # 数据结构 + JSON 契约
+  middleware/            # CORS / JWT / AccessLog
+frontend/src/
+  api/                   # axios 封装 + insight API + fallback-data / demo-real-data
+  components/            # 图表 / 表格 / 筛选组件
+  views/                 # 页面（洞察 / 内容 / 市场 / 品牌 / 登录 / 资料）
+  stores/                # Pinia（filter / insight / user）
+ai/                      # Python FastAPI 智能洞察引擎
+docs/                    # 架构 / 设计 spec / 计划 / 面试清单
+```
 
-## AI 代理交接
+---
 
-本项目已为 AI 编码工具（OpenAI Codex / Claude Code / Cursor / GitHub Copilot）准备交接手册：**`CODEX.md`**（与 `AGENTS.md` 内容一致）。
-任何 AI 代理接手前请先阅读该文件，严格遵守其中的「铁律」与「已知 bug 修复」，避免重复踩坑。
+## 9. AI 代理交接
+
+已为 AI 编码工具（OpenAI Codex / Claude Code / Cursor / GitHub Copilot）准备交接手册：根目录 `AGENTS.md` / `CODEX.md`（内容一致）。接手前请先阅读，严格遵守其中的「铁律」与「已知 bug 修复」。
