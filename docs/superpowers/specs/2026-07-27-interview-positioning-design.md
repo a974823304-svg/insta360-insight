@@ -51,6 +51,8 @@
 ### 2.2 字段映射
 在 `backend/internal/service/source/douyin_adapter.go` 把真实响应 JSON 映射到 `Kpi` / `ViewsTrend` schema，**两种 token 模式都支持**（已有 `TokenProvider` + `StaticToken`/`ClientToken` 抽象，复用即可）。`requireToken` 拿不到 token 仍返回 `ErrNotImplemented` 触发回退，保持兜底不崩。
 
+> **现实边界（诚实说明，避免面试被追问露馅）**：现有适配器映射的是 `/data/external/user/*` **用户数据端点**，真正"个人号能跑通"靠的是**你自己的抖音号授权 `access_token`**（免费，返回你自己的真实数据）；`client_token` 覆盖的是公开**发现类**接口（榜单/视频检索等），同样是免费公开数据。无论走哪条，本项目的 `httptest` 用例证明的是**映射层正确对接了真实响应形状**——这是面试要讲的硬点；而"能否用个人号 live 拉到 KPI"取决于所选端点与账号权限，不夸大。
+
 ### 2.3 测试证明（面试硬通货，重点）
 用 `httptest` 起一个**假抖音服务器**，喂**真实形状的响应 JSON**，断言适配器正确映射到我们的 schema。
 - 新增 `backend/internal/service/source/real_insight_test.go`：`TestDouyinInsightRealMapping`（httptest 假抖音 → 断言 KPI/趋势映射正确）。
